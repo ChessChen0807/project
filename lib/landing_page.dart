@@ -28,7 +28,32 @@ class _LandingPageState extends State<LandingPage>{
 
   //Function to log the user in using their email and password
   void _login(){
+    //Refreshing the screen
+    setState((){
+      _errorMessage =  ''; //This line resets errormessgaes
+    });
 
+    //hold user text data
+    String _email = _emailController.text;
+    String _password = _passwordController.text;
+    String _username = _usernameController.text;
 
+    FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _email,
+        password: _password
+    ).then((value){ //code that runs if login is successful
+      //TODO: store token and data
+      //TODO: Push to home page
+    }).catchError((error){ //Code that runs if unsuccessful
+      setState(() {
+        _errorMessage = 'Failed to sign in ${error.toString()}';
+      });
+    });
+
+  }
+
+  //go back to previous page
+  void _goBack(){
+    Navigator.pop(context);
   }
 }
