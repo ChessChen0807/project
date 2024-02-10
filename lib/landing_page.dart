@@ -1,4 +1,6 @@
 //importing necessary libraries for landing page
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //:TODO Add the auth_service.dart
@@ -15,6 +17,8 @@ class LandingPage extends StatefulWidget {
 //type underscore to make classes private, private classes cannot be accessed in other file.
 
 class _LandingPageState extends State<LandingPage> {
+
+  late StreamSubscription<User?> user;
   //_autho an instance of FirebaseAUth which gives us access to firebase auth functions.
   late FirebaseAuth _auth;
 
@@ -37,6 +41,21 @@ class _LandingPageState extends State<LandingPage> {
     String _email = _emailController.text;
     String _password = _passwordController.text;
     String _username = _usernameController.text;
+
+    //Set an empty function that runs when this page opens
+    @override
+    void initState(){
+      super.initState();
+      user = FirebaseAuth.instance.authStateChanges().listen((user) {
+        if(user == null){ //Are not loggged in
+          print("User is signed out");
+        }else{
+          print("User is logged in");
+          //TODO: Navigate to the home page
+        }
+      });
+    }
+
 
     FirebaseAuth.instance
         .signInWithEmailAndPassword(email: _email, password: _password)

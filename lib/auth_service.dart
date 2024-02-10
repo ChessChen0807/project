@@ -13,6 +13,19 @@ class AuthService{
 
   //Function to log the user out
   Future<void> logout() async {
-
+  try{
+    //Sign them out of firebase
+    await auth.signOut();
+    //Remove the token
+    //TODO: Remove token if necessary
+  } catch (e){
+    print(e);
   }
+  }
+
+  //Fetching the user's id for future use.
+  Future<String?> getUserUID() async{
+    final User? user = auth.currentUser;
+    return user?.uid;
+}
 }
