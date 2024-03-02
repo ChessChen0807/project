@@ -27,6 +27,8 @@ class _LandingPageState extends State<LandingPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool isSigningUp = true;
+
   //Set an empty string to hold error messages
   String _errorMessage = '';
 
@@ -113,6 +115,7 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   void dispose() {
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -137,12 +140,81 @@ class _LandingPageState extends State<LandingPage> {
                   _errorMessage,
                   style: const TextStyle(color: Colors.red),
                 ),
+                if(isSigningUp)
                 TextField(
                   controller: _usernameController,
                   decoration: const InputDecoration(
                     labelText: 'Username',
                   ),
-                )
+                ),
+                if(isSigningUp)
+                const SizedBox(height: 16.0),
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                TextField(
+                  obscureText: true,
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password'
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //Login and sign up button
+                        ElevatedButton(
+                            onPressed: () {
+                              if (isSigningUp) {
+                                //User is trying to sign up
+                                _signup();
+                              } else {
+                                _login();
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                              minimumSize: const Size(250, 50),
+                            ),
+                            child: Text(
+                              isSigningUp ? 'Sign Up' : 'Login',
+                              style:const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                              )
+                            )
+                        ),
+                      ],
+                    ),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: (){
+                          if(isSigningUp){
+                            setState(() {
+                              isSigningUp = false;
+                            });
+                          }else{
+                            setState(() {
+                              isSigningUp = true;
+                            });
+                          }
+                        },
+                        child: Text(
+                          isSigningUp ? 'Or Login' : 'Or Sign Up'
+                        ),
+                      )
+                    )
+                  ],
+                ),
               ],
             ),
           ),
