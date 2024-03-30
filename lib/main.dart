@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'landing_page.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+
+  runApp(ChangeNotifierProvider(
+      create: (context) => ApplicationState(),
+    builder: ((context, child) => const MyApp()),
+  ));
 }
 
 class MyApp extends StatelessWidget {
