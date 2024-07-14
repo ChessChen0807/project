@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:project/routePage.dart';
+import 'package:project/trending.dart';
 import 'landing_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -45,7 +47,7 @@ class AuthenticationWrapper extends StatelessWidget{
           }else{
             if(snapshot.hasData){
               print("User is logged in");
-              return HttpPage();
+              return const RoutePage();
             }else{
               print("User needs to log in");
               return LandingPage(name: 'Login / Sign Up');

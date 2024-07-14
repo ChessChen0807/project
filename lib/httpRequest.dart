@@ -8,6 +8,7 @@ class HttpPage extends StatefulWidget {
 
 class _HttpPageState extends State<HttpPage> {
 
+  String _inputData = "";
   String _responseData = "";
   TextEditingController _textController = TextEditingController();
   List<ChatMessage> _message = <ChatMessage>[];
@@ -20,9 +21,9 @@ class _HttpPageState extends State<HttpPage> {
           isUserMessage: true
       );
       setState(() {
-        _messages.insert(0, message);
+        _message.insert(0, message);
       });
-      fetchData('get_opening_advice/$text');
+      fetchData(text);
     }
   }
 
@@ -37,7 +38,7 @@ class _HttpPageState extends State<HttpPage> {
 
       //check if response was successful
       if (response.statusCode == 200) {
-        ChatMessage message = ChatMessage(message: response.body, isUserMessage: false)
+        ChatMessage message = ChatMessage(message: response.body, isUserMessage: false);
 
         setState(() {
           _responseData = response.body;
@@ -51,7 +52,34 @@ class _HttpPageState extends State<HttpPage> {
     }
   }
 
-  @override
+  Widget _buildTextComposer(){
+    return IconTheme(
+        data: IconThemeData(),
+        child: Container(
+          margin: EdgeInsets.symmetric(horizontal: 8.0),
+          child: Row(
+            children: <Widget>[
+              Container(
+                child: Flexible(
+                  child: TextField(
+                    controller: _textController,
+                    onSubmitted: _handleSubmitted,
+                    decoration: InputDecoration.collapsed(hintText: 'Send a message'),
+                  ),
+                ),
+              ),
+              Container(
+                  margin: EdgeInsets.symmetric(horizontal: 4.0),
+                  child: IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: () => _handleSubmitted(_textController.text),
+                  )
+              )
+            ],
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,37 +94,16 @@ class _HttpPageState extends State<HttpPage> {
                   itemCount: _message.length,
                 ),
             ),
+            Text("To contact ChessGPT, use the following instructions:\n"
+               "get_opening_adive/<opening_name>\n"
+               "top_n_opening_name/<int:number>\n"
+               "victory_status_by_opening_name/<opening_name>"),
+            Divider(height: 1.0,),
+            _buildTextComposer() // use the _buildTextComposer
           ],
         ));
   }
 
-  Widget _buildTextComposer(){
-    return IconTheme(
-        data: IconThemeData(),
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(
-            children: <Widget>[
-              Container(
-                child: Flexible(
-                  child: TextField(
-                  controller: _textController,
-                     onSubmitted: _handleSubmitted,
-                    decoration: InputDecoration.collapsed(hintText: 'Send a message'),
-          ),
-                ),
-              ),
-              Containder(
-                margin: EdgeInsets.symmetric(horizontal: 4.0),
-                    child: IconButton(
-                      icon: Icon(Icons.send),
-                      onPressed: () => _handleSubmitted(_textController.text),
-                    )
-              )
-            ],
-          ),
-        )),
-  }
 }
 
 class ChatMessage extends StatelessWidget {
@@ -105,36 +112,34 @@ class ChatMessage extends StatelessWidget {
 
   ChatMessage({required this.message, required this.isUserMessage});
 
-  @override
+
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: <Widget>[
           Expanded(
-            children: [
-              Column(
-                crossAxisAlignment: isUserMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isUserMessage ? 'Me' : 'Chess GPT',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+            child: Column(
+              crossAxisAlignment: isUserMessage ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isUserMessage ? 'Me' : 'Chess GPT',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 5.0),
+                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: isUserMessage
+                        ? Colors.blue.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.3),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 5.0),
-                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: isUserMessage
-                          ? Colors.blue.withOpacity(0.3)
-                          : Colors.grey.withOpacity(0.3),
-                    ),
-                    child: Text(message),
-                  ),
-                ],
-              ),
-            ],
-          )
+                  child: Text(message),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
